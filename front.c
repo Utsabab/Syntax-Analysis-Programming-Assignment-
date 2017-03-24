@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 
 /* Global declarations */
 /* Variables */
@@ -17,6 +19,12 @@ FILE *in_fp, *fopen();
 char* each_line = NULL;
 size_t read = 0;
 size_t len = 0;
+int num_col = 1;
+int num_row = 0;
+int break_at = 0;
+int char_index;
+char read_till[1000];
+char last_read[1000];
 
 /* Function declarations */
 void addChar();
@@ -61,15 +69,25 @@ void main(int argc, char* argv[]) {
  	printf("ERROR - cannot open %s\n", file);
  	else {
  		while ((read = getline(&each_line, &len, in_fp)) != -1) {
- 			
- 		}
- 		getChar();
- 		do {
- 			lex();
- 			expr();
- 		} while (nextToken != EOF);
+ 			strcpy(read_till, "");
+ 			strcpy(last_read, "");
+ 		 	num_row++;
+ 		 	num_col = 1;
+ 		 	char_index = 0;
+ 		 	break_at = 0;
+ 		 	getChar();
+ 		 	if (each_line != NULL) {
+ 		 		do {
+ 					lex();
+ 					expr();
+ 					if (break_at == 1) {
+ 						break;
+ 					}
+ 				} while (nextToken != EOF);
+
+ 		 	}
+		}
  	}
- 	fclose(in_fp);
 }
 
 //while (fgets()) {
@@ -116,7 +134,9 @@ int lookup(char ch) {
 		nextToken = EOF;
 		break;
 	}
- 	return nextToken;
+	strcat(read_till, lexeme);
+	strcat(read_till, " ");
+	return nextToken;
 }
 
 /*****************************************************/
@@ -136,7 +156,9 @@ void addChar() {
  			input and determine its character class */
 
 void getChar() {
- 	if ((nextChar = getc(in_fp)) != EOF) {
+ 	if (each_line[char_index] != '\n' && each_line[char_index] != '\0') {
+ 		num_col++;
+ 		nextChar = each_line[char_index++];
  		if (isalpha(nextChar))
  			charClass = LETTER;
  		else if (isdigit(nextChar))
@@ -164,6 +186,8 @@ void getNonBlank() {
 int lex() {
 	lexLen = 0;
  	getNonBlank();
+ 	last_read = nextChar;
+ 	strcpy(last_read, lexeme);
  	switch (charClass) {
 
  	/* Parse identifiers */
@@ -174,6 +198,8 @@ int lex() {
  			addChar();
  			getChar();
  		}
+ 		strcat(curr_read, lexeme);
+ 		strcat(curr_read, " ");
  		nextToken = IDENT;
  		break;
 
@@ -185,6 +211,8 @@ int lex() {
  			addChar();
  			getChar();
  		}
+ 		strcat(curr_read, lexeme);
+ 		strcat(curr_read, " ");
  		nextToken = INT_LIT;
  		break;
 
