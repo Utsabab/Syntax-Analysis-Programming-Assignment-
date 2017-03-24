@@ -247,7 +247,7 @@ void expr() {
 	printf("Enter <expr>\n");
 /* Parse the first term */
 	term();
-	if (break_at = 1) {
+	if (break_at == 1) {
 		return;
 	}
 /* As long as the next token is + or -, get
@@ -270,11 +270,17 @@ void term() {
 	printf("Enter <term>\n");
 /* Parse the first factor */
 	factor();
+	if (break_at == 1) {
+		return;
+	}
 /* As long as the next token is * or /, get the
 next token and parse the next factor */
 	while (nextToken == MULT_OP || nextToken == DIV_OP) {
 		lex();
 		factor();
+		if (break_at == 1) {
+			return;
+		}
 	}
 	printf("Exit <term>\n");
 } /* End of function term */
