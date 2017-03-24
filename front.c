@@ -316,3 +316,7 @@ parenthesis */
 	printf("Exit <factor>\n");;
 }
 /* End of function factor */
+
+void error () {
+	
+}
