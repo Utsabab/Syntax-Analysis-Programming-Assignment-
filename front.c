@@ -304,19 +304,25 @@ parenthesis */
 			expr();
 			if (nextToken == RIGHT_PAREN)
 				lex();
-			else
+			else {
 				error();
+				return;
+			}
 		} /* End of if (nextToken == ... */
 
 /* It was not an id, an integer literal, or a left
 parenthesis */
-		else
+		else {
 			error();
+			return;
+		}
 	} /* End of else */
 	printf("Exit <factor>\n");;
 }
 /* End of function factor */
 
 void error () {
-	
+	printf("Line %d: %d: %s:", num_row, num_col, each_line);
+	printf("Syntax error: %s\n Error occurs at %s\n", read_till, last_read_lex);
+	break_at = 1;
 }
