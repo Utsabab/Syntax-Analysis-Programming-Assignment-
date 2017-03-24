@@ -23,8 +23,9 @@ int num_col = 1;
 int num_row = 0;
 int break_at = 0;
 int char_index;
+char last_read_char;	
 char read_till[1000];
-char last_read[1000];
+char last_read_lex[1000];
 
 /* Function declarations */
 void addChar();
@@ -70,7 +71,7 @@ void main(int argc, char* argv[]) {
  	else {
  		while ((read = getline(&each_line, &len, in_fp)) != -1) {
  			strcpy(read_till, "");
- 			strcpy(last_read, "");
+ 			strcpy(last_read_lex, "");
  		 	num_row++;
  		 	num_col = 1;
  		 	char_index = 0;
@@ -186,8 +187,8 @@ void getNonBlank() {
 int lex() {
 	lexLen = 0;
  	getNonBlank();
- 	last_read = nextChar;
- 	strcpy(last_read, lexeme);
+ 	last_read_char = nextChar;
+ 	strcpy(last_read_lex, lexeme);
  	switch (charClass) {
 
  	/* Parse identifiers */
@@ -198,8 +199,8 @@ int lex() {
  			addChar();
  			getChar();
  		}
- 		strcat(curr_read, lexeme);
- 		strcat(curr_read, " ");
+ 		strcat(read_till, lexeme);
+ 		strcat(read_till, " ");
  		nextToken = IDENT;
  		break;
 
@@ -211,8 +212,8 @@ int lex() {
  			addChar();
  			getChar();
  		}
- 		strcat(curr_read, lexeme);
- 		strcat(curr_read, " ");
+ 		strcat(read_till, lexeme);
+ 		strcat(read_till, " ");
  		nextToken = INT_LIT;
  		break;
 
@@ -246,11 +247,17 @@ void expr() {
 	printf("Enter <expr>\n");
 /* Parse the first term */
 	term();
+	if (break_at = 1) {
+		return;
+	}
 /* As long as the next token is + or -, get
 the next token and parse the next term */
 	while (nextToken == ADD_OP || nextToken == SUB_OP) {
 		lex();
 		term();
+		if (break_at == 1) {
+			return;
+		}
 	}
 	printf("Exit <expr>\n");
 } /* End of function expr */
