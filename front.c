@@ -19,10 +19,12 @@ FILE *in_fp, *fopen();
 char* each_line = NULL;
 size_t read = 0;
 size_t len = 0;
+
+
 int num_col = 1;
 int num_row = 0;
 int break_at = 0;
-int char_index;
+int charindex;
 char last_read_char;	
 char read_till[1000];
 char last_read_lex[1000];
@@ -60,7 +62,7 @@ int lex();
 int main(int argc, char* argv[]) {
 
 	if (argc != 2) {
-		printf("Number of argument doesn't match");
+		printf("Number of argument doesn't match\n");
 		exit(0);
 	}
 
@@ -73,14 +75,14 @@ int main(int argc, char* argv[]) {
  		while ((read = getline(&each_line, &len, in_fp)) != -1) {
 
  			if (read - 1 == 0) {
- 				printf("\nEmpty LIne\n");
+ 				printf("\nEmpty Line\n");
  				continue;
  			}
 
  			strcpy(read_till, "");
  			num_col = 1;
  		 	num_row++;
- 		 	char_index = 0;
+ 		 	charindex = 0;
  		 	break_at = 0;
  		 	getChar();
  		 	if (each_line != NULL) {
@@ -95,6 +97,7 @@ int main(int argc, char* argv[]) {
  		 	}
 		}
  	}
+ 	return 0;
 }
 
 //while (fgets()) {
@@ -168,9 +171,9 @@ void addChar() {
  			input and determine its character class */
 
 void getChar() {
- 	if (each_line[char_index] != '\n' && each_line[char_index] != '\0') {
+ 	if (each_line[charindex] != '\n' && each_line[charindex] != '\0') {
  		num_col++;
- 		nextChar = each_line[char_index++];
+ 		nextChar = each_line[charindex++];
  		if (isalpha(nextChar))
  			charClass = LETTER;
  		else if (isdigit(nextChar))
