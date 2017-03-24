@@ -14,6 +14,10 @@ int token;
 int nextToken;
 FILE *in_fp, *fopen();
 
+char* each_line = NULL;
+size_t read = 0;
+size_t len = 0;
+
 /* Function declarations */
 void addChar();
 void getChar();
@@ -43,12 +47,22 @@ int lex();
 /******************************************************/
 
 /* main driver */
-main() {
+void main(int argc, char* argv[]) {
+
+	if (argc != 2) {
+		printf("Number of argument doesn't match");
+		exit(0);
+	}
 
 /* Open the input data file and process its contents */
-	if ((in_fp = fopen("front.in", "r")) == NULL)
- 	printf("ERROR - cannot open front.in \n");
+	char* file = argv[1];
+
+	if ((in_fp = fopen(file, "r")) == NULL)
+ 	printf("ERROR - cannot open %s\n", file);
  	else {
+ 		while ((read = getline(&each_line, &len, in_fp)) != -1) {
+ 			
+ 		}
  		getChar();
  		do {
  			lex();
@@ -58,9 +72,9 @@ main() {
  	fclose(in_fp);
 }
 
-while (fgets()) {
+//while (fgets()) {
 
-}
+
 /*****************************************************/
 /* lookup - a function to lookup operators and parentheses
  			and return the token */
@@ -82,25 +96,25 @@ int lookup(char ch) {
 	 	nextToken = ADD_OP;
 	 	break;
 
-		 case '-':
-		 addChar();
-		 nextToken = SUB_OP;
-		 break;
+		case '-':
+		addChar();
+		nextToken = SUB_OP;
+		break;
 
-		 case '*':
-		 addChar();
-		 nextToken = MULT_OP;
-		 break;
+		case '*':
+		addChar();
+		nextToken = MULT_OP;
+		break;
 
-		 case '/':
-		 addChar();
-		 nextToken = DIV_OP;
-		 break;
+		case '/':
+		addChar();
+		nextToken = DIV_OP;
+		break;
 
-		 default:
-		 addChar();
-		 nextToken = EOF;
-		 break;
+		default:
+		addChar();
+		nextToken = EOF;
+		break;
 	}
  	return nextToken;
 }
