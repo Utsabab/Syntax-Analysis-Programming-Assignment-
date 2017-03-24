@@ -52,11 +52,12 @@ int lex();
 #define DIV_OP 24
 #define LEFT_PAREN 25
 #define RIGHT_PAREN 26
+#define NEW_LINE 33
 
 /******************************************************/
 
 /* main driver */
-void main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 
 	if (argc != 2) {
 		printf("Number of argument doesn't match");
@@ -67,13 +68,18 @@ void main(int argc, char* argv[]) {
 	char* file = argv[1];
 
 	if ((in_fp = fopen(file, "r")) == NULL)
- 	printf("ERROR - cannot open %s\n", file);
+ 		printf("ERROR - cannot open %s\n", file);
  	else {
  		while ((read = getline(&each_line, &len, in_fp)) != -1) {
+
+ 			if (read - 1 == 0) {
+ 				printf("\nEmpty LIne\n");
+ 				continue;
+ 			}
+
  			strcpy(read_till, "");
- 			strcpy(last_read_lex, "");
+ 			num_col = 1;
  		 	num_row++;
- 		 	num_col = 1;
  		 	char_index = 0;
  		 	break_at = 0;
  		 	getChar();
@@ -101,39 +107,44 @@ void main(int argc, char* argv[]) {
 int lookup(char ch) {
 	switch (ch) {
 	 	case '(':
-	 	addChar();
-	 	nextToken = LEFT_PAREN;
-	 	break;
+		 	addChar();
+		 	nextToken = LEFT_PAREN;
+		 	break;
 
 	 	case ')':
-	 	addChar();
-	 	nextToken = RIGHT_PAREN;
-	 	break;
+		 	addChar();
+		 	nextToken = RIGHT_PAREN;
+		 	break;
 
 	 	case '+':
-	 	addChar();
-	 	nextToken = ADD_OP;
-	 	break;
+		 	addChar();
+		 	nextToken = ADD_OP;
+		 	break;
 
 		case '-':
-		addChar();
-		nextToken = SUB_OP;
-		break;
+			addChar();
+			nextToken = SUB_OP;
+			break;
 
 		case '*':
-		addChar();
-		nextToken = MULT_OP;
-		break;
+			addChar();
+			nextToken = MULT_OP;
+			break;
 
 		case '/':
-		addChar();
-		nextToken = DIV_OP;
-		break;
+			addChar();
+			nextToken = DIV_OP;
+			break;
+
+		case '\n':
+			addChar();
+			nextToken = NEW_LINE;
+			break;
 
 		default:
-		addChar();
-		nextToken = EOF;
-		break;
+			addChar();
+			nextToken = EOF;
+			break;
 	}
 	strcat(read_till, lexeme);
 	strcat(read_till, " ");
@@ -149,7 +160,7 @@ void addChar() {
  		lexeme[lexLen] = 0;
  	}
  	else
- 	printf("Error - lexeme is too long \n");
+ 		printf("Error - lexeme is too long \n");
 }
 
 /*****************************************************/
@@ -188,54 +199,56 @@ int lex() {
 	lexLen = 0;
  	getNonBlank();
  	last_read_char = nextChar;
- 	strcpy(last_read_lex, lexeme);
  	switch (charClass) {
 
  	/* Parse identifiers */
  		case LETTER:
- 		addChar();
- 		getChar();
- 		while (charClass == LETTER || charClass == DIGIT) {
- 			addChar();
- 			getChar();
- 		}
- 		strcat(read_till, lexeme);
- 		strcat(read_till, " ");
- 		nextToken = IDENT;
- 		break;
+	 		addChar();
+	 		getChar();
+	 		while (charClass == LETTER || charClass == DIGIT) {
+	 			addChar();
+	 			getChar();
+	 		}
+	 		strcpy(last_read_lex, lexeme);
+	 		strcat(read_till, lexeme);
+	 		strcat(read_till, " ");
+	 		nextToken = IDENT;
+	 		break;
 
 	/* Parse integer literals */
  		case DIGIT:
- 		addChar();
- 		getChar();
- 		while (charClass == DIGIT) {
- 			addChar();
- 			getChar();
- 		}
- 		strcat(read_till, lexeme);
- 		strcat(read_till, " ");
- 		nextToken = INT_LIT;
- 		break;
+	 		addChar();
+	 		getChar();
+	 		while (charClass == DIGIT) {
+	 			addChar();
+	 			getChar();
+	 		}
+	 		strcpy(last_read_lex, lexeme);
+	 		strcat(read_till, lexeme);
+	 		strcat(read_till, " ");
+	 		nextToken = INT_LIT;
+	 		break;
 
 	/* Parentheses and operators */
  		case UNKNOWN:
- 		lookup(nextChar);
- 		getChar();
- 		break;
+	 		lookup(nextChar);
+	 		getChar();
+	 		strcpy(last_read_lex, lexeme);
+	 		break;
 
 	/* EOF */
  		case EOF:
- 		nextToken = EOF;
- 		lexeme[0] = 'E';
- 		lexeme[1] = 'O';
- 		lexeme[2] = 'F';
- 		lexeme[3] = 0;
- 		break;
+	 		nextToken = EOF;
+	 		lexeme[0] = 'E';
+	 		lexeme[1] = 'O';
+	 		lexeme[2] = 'F';
+	 		lexeme[3] = 0;
+	 		break;
 
  	} /* End of switch */
 
  	printf("Next token is: %d, Next lexeme is %s\n",
- 	nextToken, lexeme);
+ 			nextToken, lexeme);
  	return nextToken;
 } /* End of function lex */
 
